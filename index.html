@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="theme-color" content="#0f1117"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="JJM Estimate"/>
+<meta name="description" content="PHE Department Cost Estimation Portal"/>
+<title>PHE Cost Estimation System</title>
+<link rel="manifest" href="manifest.json"/>
+<link rel="apple-touch-icon" href="icon-192.png"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&family=Playfair+Display:wght@600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="style.css"/>
+<style>
+  body { padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); }
+  #install-banner { display:none; position:fixed; bottom:80px; left:50%; transform:translateX(-50%); background:#1f2436; border:1px solid #3a4060; border-radius:16px; padding:1rem 1.25rem; box-shadow:0 8px 32px rgba(0,0,0,0.5); z-index:9999; width:calc(100% - 2rem); max-width:400px; animation:slideUp 0.3s ease; }
+  #install-banner.show { display:flex; align-items:center; gap:1rem; }
+  #install-banner .banner-icon { font-size:2rem; flex-shrink:0; }
+  #install-banner .banner-text { flex:1; }
+  #install-banner .banner-title { font-size:0.9rem; font-weight:700; color:#e8eaf0; font-family:'DM Sans',sans-serif; }
+  #install-banner .banner-sub   { font-size:0.75rem; color:#8b92a8; font-family:'DM Sans',sans-serif; }
+  #install-banner .banner-actions { display:flex; gap:0.5rem; flex-shrink:0; }
+  .btn-install { background:linear-gradient(135deg,#4d9ef7,#3b82f6); color:#fff; border:none; border-radius:8px; padding:0.5rem 1rem; font-size:0.8rem; font-weight:600; cursor:pointer; font-family:'DM Sans',sans-serif; }
+  .btn-dismiss { background:transparent; color:#8b92a8; border:1px solid #3a4060; border-radius:8px; padding:0.5rem 0.75rem; font-size:0.8rem; cursor:pointer; font-family:'DM Sans',sans-serif; }
+  @keyframes slideUp { from{opacity:0;transform:translateX(-50%) translateY(20px)} to{opacity:1;transform:translateX(-50%) translateY(0)} }
+  #offline-bar { display:none; background:#e55353; color:#fff; text-align:center; padding:0.4rem; font-size:0.78rem; font-family:'DM Sans',sans-serif; font-weight:600; position:fixed; top:0; left:0; right:0; z-index:99999; }
+  #offline-bar.show { display:block; }
+</style>
+</head>
+<body>
+<div id="offline-bar">📵 You are offline — app is running from cache</div>
+<div id="app"></div>
+<div id="install-banner">
+  <div class="banner-icon">💧</div>
+  <div class="banner-text">
+    <div class="banner-title">Install JJM Estimate</div>
+    <div class="banner-sub">Add to home screen for offline access</div>
+  </div>
+  <div class="banner-actions">
+    <button class="btn-install" id="btn-install">Install</button>
+    <button class="btn-dismiss" id="btn-dismiss">✕</button>
+  </div>
+</div>
+<script src="app.js"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/jjmestimate/sw.js')
+        .then(r => console.log('SW:', r.scope)).catch(e => console.log('SW err:', e));
+    });
+  }
+  let deferredPrompt;
+  const banner=document.getElementById('install-banner');
+  const btnI=document.getElementById('btn-install');
+  const btnD=document.getElementById('btn-dismiss');
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault(); deferredPrompt=e;
+    setTimeout(()=>banner.classList.add('show'),3000);
+  });
+  btnI?.addEventListener('click', async()=>{
+    banner.classList.remove('show');
+    if(deferredPrompt){deferredPrompt.prompt();const{outcome}=await deferredPrompt.userChoice;deferredPrompt=null;}
+  });
+  btnD?.addEventListener('click',()=>banner.classList.remove('show'));
+  window.addEventListener('appinstalled',()=>{banner.classList.remove('show');deferredPrompt=null;});
+  const ob=document.getElementById('offline-bar');
+  window.addEventListener('offline',()=>ob.classList.add('show'));
+  window.addEventListener('online',()=>ob.classList.remove('show'));
+  if(!navigator.onLine)ob.classList.add('show');
+</script>
+</body>
+</html>
