@@ -1511,7 +1511,7 @@ function renderStepScheme() {
           <label class="form-label">Zone <span class="required">*</span></label>
           <select id="s-zone" class="form-control">
             <option value="">Select Zone</option>
-            ${[' Barak valley Zone','Bodoland Territory Autonomous District','DHAC(Haflong) Zone','Karbi Anglong Autonomous Council','Lower Assam Zone', 'North Assam Zone', 'Upper Assam Zone'].map(z=>`<option ${sd.zone===z?'selected':''} value="${z}">${z}</option>`).join('')}
+            ${['Barak valley Zone','Bodoland Territory Autonomous District','DHAC(Haflong) Zone','Karbi Anglong Autonomous Council','Lower Assam Zone', 'North Assam Zone', 'Upper Assam Zone'].map(z=>`<option ${sd.zone===z?'selected':''} value="${z}">${z}</option>`).join('')}
           </select>
           <div class="form-error"></div>
         </div>
