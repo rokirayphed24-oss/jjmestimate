@@ -1,75 +1,1311 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
-<meta name="theme-color" content="#0f1117"/>
-<meta name="mobile-web-app-capable" content="yes"/>
-<meta name="apple-mobile-web-app-capable" content="yes"/>
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-<meta name="apple-mobile-web-app-title" content="JJM Estimate"/>
-<meta name="description" content="PHE Department Cost Estimation Portal"/>
-<title>PHE Cost Estimation System</title>
-<link rel="manifest" href="manifest.json"/>
-<link rel="apple-touch-icon" href="icon-192.png"/>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&family=Playfair+Display:wght@600&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css"/>
-<style>
-  body { padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); }
-  #install-banner { display:none; position:fixed; bottom:80px; left:50%; transform:translateX(-50%); background:#1f2436; border:1px solid #3a4060; border-radius:16px; padding:1rem 1.25rem; box-shadow:0 8px 32px rgba(0,0,0,0.5); z-index:9999; width:calc(100% - 2rem); max-width:400px; animation:slideUp 0.3s ease; }
-  #install-banner.show { display:flex; align-items:center; gap:1rem; }
-  #install-banner .banner-icon { font-size:2rem; flex-shrink:0; }
-  #install-banner .banner-text { flex:1; }
-  #install-banner .banner-title { font-size:0.9rem; font-weight:700; color:#e8eaf0; font-family:'DM Sans',sans-serif; }
-  #install-banner .banner-sub   { font-size:0.75rem; color:#8b92a8; font-family:'DM Sans',sans-serif; }
-  #install-banner .banner-actions { display:flex; gap:0.5rem; flex-shrink:0; }
-  .btn-install { background:linear-gradient(135deg,#4d9ef7,#3b82f6); color:#fff; border:none; border-radius:8px; padding:0.5rem 1rem; font-size:0.8rem; font-weight:600; cursor:pointer; font-family:'DM Sans',sans-serif; }
-  .btn-dismiss { background:transparent; color:#8b92a8; border:1px solid #3a4060; border-radius:8px; padding:0.5rem 0.75rem; font-size:0.8rem; cursor:pointer; font-family:'DM Sans',sans-serif; }
-  @keyframes slideUp { from{opacity:0;transform:translateX(-50%) translateY(20px)} to{opacity:1;transform:translateX(-50%) translateY(0)} }
-  #offline-bar { display:none; background:#e55353; color:#fff; text-align:center; padding:0.4rem; font-size:0.78rem; font-family:'DM Sans',sans-serif; font-weight:600; position:fixed; top:0; left:0; right:0; z-index:99999; }
-  #offline-bar.show { display:block; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SO Ranking Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --success: #10b981;
+            --success-light: #d1fae5;
+            --warning: #f59e0b;
+            --warning-light: #fef3c7;
+            --danger: #ef4444;
+            --danger-light: #fee2e2;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            --white: #ffffff;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-lg);
+        }
+
+        h1 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: var(--gray-600);
+        }
+
+        .upload-section {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .date-range-section {
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .date-range-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .date-range-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .date-input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .date-input-group label {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--gray-600);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .date-input-group input {
+            padding: 0.625rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-family: 'Inter', -apple-system, sans-serif;
+            transition: border-color 0.2s;
+        }
+
+        .date-input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .upload-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .upload-card {
+            background: var(--gray-50);
+            border: 2px dashed var(--gray-300);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .upload-card:hover {
+            border-color: var(--primary);
+            background: var(--gray-100);
+            transform: translateY(-2px);
+        }
+
+        .upload-card.filled {
+            border-color: var(--success);
+            background: var(--success-light);
+            border-style: solid;
+        }
+
+        .upload-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .upload-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 0.25rem;
+            display: block;
+        }
+
+        .upload-hint {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+            margin-bottom: 1rem;
+        }
+
+        .file-btn {
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 0.5rem 1.25rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-block;
+        }
+
+        .file-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow);
+        }
+
+        .file-name {
+            font-size: 0.75rem;
+            margin-top: 0.75rem;
+            color: var(--gray-600);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--white);
+            border: none;
+            padding: 0.875rem 2.5rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+            transition: transform 0.3s;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .metric-icon {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .metric-label {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--gray-900);
+        }
+
+        .section-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--gray-100);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .download-btn {
+            background: var(--white);
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 0.5rem 1.25rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .download-btn:hover {
+            background: var(--primary);
+            color: var(--white);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow);
+        }
+
+        .table-container {
+            margin-top: 1.5rem;
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid var(--gray-200);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
+
+        th {
+            background: var(--gray-50);
+            text-align: left;
+            padding: 1rem 0.75rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 2px solid var(--gray-200);
+        }
+
+        td {
+            padding: 1rem 0.75rem;
+            border-bottom: 1px solid var(--gray-100);
+            color: var(--gray-700);
+        }
+
+        /* Traffic light row colors - darker shades */
+        .row-good-1 { background: linear-gradient(90deg, rgba(22, 163, 74, 0.20) 0%, rgba(22, 163, 74, 0.08) 100%); }
+        .row-good-2 { background: linear-gradient(90deg, rgba(22, 163, 74, 0.16) 0%, rgba(22, 163, 74, 0.06) 100%); }
+        .row-good-3 { background: linear-gradient(90deg, rgba(22, 163, 74, 0.12) 0%, rgba(22, 163, 74, 0.04) 100%); }
+        
+        .row-warning-1 { background: linear-gradient(90deg, rgba(234, 179, 8, 0.20) 0%, rgba(234, 179, 8, 0.08) 100%); }
+        .row-warning-2 { background: linear-gradient(90deg, rgba(234, 179, 8, 0.16) 0%, rgba(234, 179, 8, 0.06) 100%); }
+        .row-warning-3 { background: linear-gradient(90deg, rgba(234, 179, 8, 0.12) 0%, rgba(234, 179, 8, 0.04) 100%); }
+        
+        .row-danger-1 { background: linear-gradient(90deg, rgba(220, 38, 38, 0.20) 0%, rgba(220, 38, 38, 0.08) 100%); }
+        .row-danger-2 { background: linear-gradient(90deg, rgba(220, 38, 38, 0.16) 0%, rgba(220, 38, 38, 0.06) 100%); }
+        .row-danger-3 { background: linear-gradient(90deg, rgba(220, 38, 38, 0.12) 0%, rgba(220, 38, 38, 0.04) 100%); }
+
+        .rank-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+        }
+
+        .rank-good { background: #16a34a; color: var(--white); }
+        .rank-warning { background: #eab308; color: var(--white); }
+        .rank-danger { background: #dc2626; color: var(--white); }
+
+        .grade-pill {
+            display: inline-block;
+            padding: 0.375rem 0.875rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.025em;
+        }
+
+        .grade-good { background: var(--success-light); color: #15803d; }
+        .grade-warning { background: var(--warning-light); color: #a16207; }
+        .grade-danger { background: var(--danger-light); color: #b91c1c; }
+
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background: var(--gray-50);
+            border-radius: 12px;
+        }
+
+        .pagination-info {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+            font-weight: 500;
+        }
+
+        .pagination-controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            flex: 1;
+            margin: 0 2rem;
+        }
+
+        .pagination-controls input[type="range"] {
+            flex: 1;
+            height: 8px;
+            border-radius: 4px;
+            background: var(--gray-300);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .pagination-controls input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: all 0.2s;
+        }
+
+        .pagination-controls input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .pagination-controls input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            border: none;
+            box-shadow: var(--shadow);
+        }
+
+        .pagination-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .pagination-btn {
+            background: var(--white);
+            border: 1px solid var(--gray-300);
+            color: var(--gray-700);
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+            background: var(--gray-100);
+            border-color: var(--gray-400);
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 4rem 2rem;
+            background: var(--white);
+            border-radius: 16px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .loading.active { display: block; }
+
+        .loading-spinner {
+            font-size: 3rem;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: var(--danger-light);
+            color: var(--danger);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            font-size: 0.875rem;
+            border-left: 4px solid var(--danger);
+        }
+
+        input[type="file"] { display: none; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+
+        @media (max-width: 768px) {
+            body { padding: 1rem 0.5rem; }
+            .header-card, .upload-section, .section-card { padding: 1.5rem; border-radius: 12px; }
+            h1 { font-size: 1.75rem; }
+            .metrics-grid { grid-template-columns: 1fr; }
+            table { font-size: 0.75rem; }
+            th, td { padding: 0.5rem; }
+            .pagination { flex-direction: column; gap: 1rem; }
+            .pagination-controls { margin: 0; width: 100%; }
+        }
+    </style>
 </head>
 <body>
-<div id="offline-bar">📵 You are offline — app is running from cache</div>
-<div id="app"></div>
-<div id="install-banner">
-  <div class="banner-icon">💧</div>
-  <div class="banner-text">
-    <div class="banner-title">Install JJM Estimate</div>
-    <div class="banner-sub">Add to home screen for offline access</div>
-  </div>
-  <div class="banner-actions">
-    <button class="btn-install" id="btn-install">Install</button>
-    <button class="btn-dismiss" id="btn-dismiss">✕</button>
-  </div>
-</div>
-<script src="app.js"></script>
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/jjmestimate/sw.js')
-        .then(r => console.log('SW:', r.scope)).catch(e => console.log('SW err:', e));
-    });
-  }
-  let deferredPrompt;
-  const banner=document.getElementById('install-banner');
-  const btnI=document.getElementById('btn-install');
-  const btnD=document.getElementById('btn-dismiss');
-  window.addEventListener('beforeinstallprompt', e => {
-    e.preventDefault(); deferredPrompt=e;
-    setTimeout(()=>banner.classList.add('show'),3000);
-  });
-  btnI?.addEventListener('click', async()=>{
-    banner.classList.remove('show');
-    if(deferredPrompt){deferredPrompt.prompt();const{outcome}=await deferredPrompt.userChoice;deferredPrompt=null;}
-  });
-  btnD?.addEventListener('click',()=>banner.classList.remove('show'));
-  window.addEventListener('appinstalled',()=>{banner.classList.remove('show');deferredPrompt=null;});
-  const ob=document.getElementById('offline-bar');
-  window.addEventListener('offline',()=>ob.classList.add('show'));
-  window.addEventListener('online',()=>ob.classList.remove('show'));
-  if(!navigator.onLine)ob.classList.add('show');
-</script>
+    <div class="container">
+        <div class="header-card">
+            <h1>🚰 SO Ranking Dashboard</h1>
+            <p class="subtitle">Jal Jeevan Mission - Performance Monitoring & Analytics</p>
+        </div>
+
+        <div id="errorMsg" class="error" style="display: none;"></div>
+
+        <div class="upload-section">
+            <div class="date-range-section">
+                <label class="date-range-label">📅 Data Date Range (Optional)</label>
+                <div class="date-range-inputs">
+                    <div class="date-input-group">
+                        <label for="startDate">From Date</label>
+                        <input type="date" id="startDate" placeholder="Start Date">
+                    </div>
+                    <div class="date-input-group">
+                        <label for="endDate">To Date</label>
+                        <input type="date" id="endDate" placeholder="End Date">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="upload-grid">
+                <div class="upload-card" id="bfmCard" onclick="document.getElementById('bfmFile').click()">
+                    <div class="upload-icon">📊</div>
+                    <label class="upload-label">BFM Report</label>
+                    <div class="upload-hint">Beneficiary Feedback Monitoring</div>
+                    <span class="file-btn">Choose File</span>
+                    <input type="file" id="bfmFile" accept=".xlsx,.csv">
+                    <div class="file-name" id="bfmName">No file selected</div>
+                </div>
+
+                <div class="upload-card" id="funcCard" onclick="document.getElementById('funcFile').click()">
+                    <div class="upload-icon">⚙️</div>
+                    <label class="upload-label">Functionality Report</label>
+                    <div class="upload-hint">Scheme Functionality Status</div>
+                    <span class="file-btn">Choose File</span>
+                    <input type="file" id="funcFile" accept=".xlsx,.csv">
+                    <div class="file-name" id="funcName">No file selected</div>
+                </div>
+
+                <div class="upload-card" id="soCard" onclick="document.getElementById('soFile').click()">
+                    <div class="upload-icon">👥</div>
+                    <label class="upload-label">SO Details</label>
+                    <div class="upload-hint">Supervising Officer Information</div>
+                    <span class="file-btn">Choose File</span>
+                    <input type="file" id="soFile" accept=".xlsx,.csv">
+                    <div class="file-name" id="soName">No file selected</div>
+                </div>
+            </div>
+
+            <div style="text-align: center;">
+                <button class="btn-primary" id="generateBtn" disabled>
+                    Generate Performance Report
+                </button>
+            </div>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="loading-spinner">⏳</div>
+            <div style="margin-top: 1rem; color: var(--gray-600); font-weight: 500;">
+                Processing your data...
+            </div>
+        </div>
+
+        <div id="results" style="display: none;">
+            <div class="metrics-grid" id="metricsGrid"></div>
+
+            <!-- SO Rankings -->
+            <div class="section-card">
+                <div class="section-header">
+                    <h2 class="section-title">📋 SO Performance Rankings</h2>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button class="download-btn" onclick="downloadPDF('so')">
+                            ↓ PDF
+                        </button>
+                        <button class="download-btn" onclick="downloadExcel('so')">
+                            ↓ Excel
+                        </button>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table id="soTable">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>SO Name</th>
+                                <th>Subdivision</th>
+                                <th>Division</th>
+                                <th>Handed Over Schemes</th>
+                                <th>BFM %</th>
+                                <th>Func %</th>
+                                <th>Perf %</th>
+                                <th>Weighted</th>
+                                <th>Grade</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="pagination">
+                    <div class="pagination-info" id="soInfo">Showing 1-10 of 0</div>
+                    <div class="pagination-controls">
+                        <input type="range" id="soSlider" min="0" max="0" value="0" step="1">
+                    </div>
+                    <div class="pagination-buttons">
+                        <button class="pagination-btn" onclick="changePage('so', -1)">← Prev</button>
+                        <button class="pagination-btn" onclick="changePage('so', 1)">Next →</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Subdivision Rankings -->
+            <div class="section-card">
+                <div class="section-header">
+                    <h2 class="section-title">🏘️ Subdivision Rankings</h2>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button class="download-btn" onclick="downloadPDF('sub')">
+                            ↓ PDF
+                        </button>
+                        <button class="download-btn" onclick="downloadExcel('sub')">
+                            ↓ Excel
+                        </button>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table id="subTable">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Subdivision</th>
+                                <th>Division</th>
+                                <th>Handed Over Schemes</th>
+                                <th>BFM %</th>
+                                <th>Func %</th>
+                                <th>Perf %</th>
+                                <th>Weighted</th>
+                                <th>Grade</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="pagination">
+                    <div class="pagination-info" id="subInfo">Showing 1-10 of 0</div>
+                    <div class="pagination-controls">
+                        <input type="range" id="subSlider" min="0" max="0" value="0" step="1">
+                    </div>
+                    <div class="pagination-buttons">
+                        <button class="pagination-btn" onclick="changePage('sub', -1)">← Prev</button>
+                        <button class="pagination-btn" onclick="changePage('sub', 1)">Next →</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Division Rankings -->
+            <div class="section-card">
+                <div class="section-header">
+                    <h2 class="section-title">🏛️ Division Rankings</h2>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button class="download-btn" onclick="downloadPDF('div')">
+                            ↓ PDF
+                        </button>
+                        <button class="download-btn" onclick="downloadExcel('div')">
+                            ↓ Excel
+                        </button>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table id="divTable">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Division</th>
+                                <th>Handed Over Schemes</th>
+                                <th>BFM %</th>
+                                <th>Func %</th>
+                                <th>Perf %</th>
+                                <th>Weighted</th>
+                                <th>Grade</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="pagination">
+                    <div class="pagination-info" id="divInfo">Showing 1-10 of 0</div>
+                    <div class="pagination-controls">
+                        <input type="range" id="divSlider" min="0" max="0" value="0" step="1">
+                    </div>
+                    <div class="pagination-buttons">
+                        <button class="pagination-btn" onclick="changePage('div', -1)">← Prev</button>
+                        <button class="pagination-btn" onclick="changePage('div', 1)">Next →</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
+    <script>
+        let files = { bfm: null, func: null, so: null };
+        let processedData = null;
+        let dateRange = { start: null, end: null };
+        let currentPages = { so: 0, sub: 0, div: 0 };
+        const ROWS_PER_PAGE = 10;
+
+        // File upload handlers
+        ['bfm', 'func', 'so'].forEach(type => {
+            document.getElementById(type + 'File').addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    files[type] = file;
+                    document.getElementById(type + 'Name').textContent = file.name;
+                    document.getElementById(type + 'Card').classList.add('filled');
+                    checkReady();
+                }
+                e.stopPropagation();
+            });
+        });
+
+        function checkReady() {
+            document.getElementById('generateBtn').disabled = !(files.bfm && files.func && files.so);
+        }
+
+        // Date range event listeners
+        document.getElementById('startDate').addEventListener('change', (e) => {
+            dateRange.start = e.target.value || null;
+        });
+
+        document.getElementById('endDate').addEventListener('change', (e) => {
+            dateRange.end = e.target.value || null;
+        });
+
+        document.getElementById('generateBtn').addEventListener('click', processFiles);
+
+        async function processFiles() {
+            document.getElementById('loading').classList.add('active');
+            document.getElementById('results').style.display = 'none';
+            document.getElementById('errorMsg').style.display = 'none';
+
+            try {
+                const bfmData = await readFile(files.bfm);
+                const funcData = await readFile(files.func);
+                const soData = await readFile(files.so);
+
+                const bfm = cleanData(bfmData);
+                const func = cleanData(funcData);
+                const so = cleanData(soData);
+
+                validateColumns(bfm, ['imis_id', 'no_of_days_bfm_reported'], 'BFM');
+                validateColumns(func, ['imis_id', 'work_status', 'functional_days'], 'Functionality');
+                validateColumns(so, ['imis_id', 'so_name', 'sub_divisions', 'division'], 'SO Details');
+
+                const results = calculateRankings(bfm, func, so);
+                processedData = results;
+
+                displayResults(results);
+                document.getElementById('results').style.display = 'block';
+
+            } catch (error) {
+                showError(error.message);
+            } finally {
+                document.getElementById('loading').classList.remove('active');
+            }
+        }
+
+        async function readFile(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        if (file.name.endsWith('.csv')) {
+                            const result = Papa.parse(e.target.result, { header: false, skipEmptyLines: true });
+                            resolve(result.data);
+                        } else {
+                            const workbook = XLSX.read(e.target.result, { type: 'binary' });
+                            const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                            const data = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+                            resolve(data);
+                        }
+                    } catch (error) {
+                        reject(error);
+                    }
+                };
+                reader.onerror = reject;
+                file.name.endsWith('.csv') ? reader.readAsText(file) : reader.readAsBinaryString(file);
+            });
+        }
+
+        function cleanData(rawData) {
+            let headerRow = 0;
+            for (let i = 0; i < Math.min(10, rawData.length); i++) {
+                const row = rawData[i].map(v => String(v).toLowerCase());
+                if (row.some(cell => cell.includes('imis'))) {
+                    headerRow = i;
+                    break;
+                }
+            }
+
+            const headers = rawData[headerRow].map(h => 
+                String(h).replace(/\ufeff/g, '').trim().toLowerCase().replace(/-/g, '_')
+            );
+            
+            const dataRows = rawData.slice(headerRow + 1);
+            
+            return dataRows.map(row => {
+                const obj = {};
+                headers.forEach((header, idx) => {
+                    if (header && header !== 'nan') {
+                        obj[header] = row[idx];
+                    }
+                });
+                return obj;
+            }).filter(row => row.imis_id);
+        }
+
+        function validateColumns(data, required, fileName) {
+            if (data.length === 0) throw new Error(`${fileName} file is empty`);
+            const cols = Object.keys(data[0]);
+            const missing = required.filter(r => !cols.includes(r));
+            if (missing.length > 0) {
+                throw new Error(`${fileName} missing columns: ${missing.join(', ')}`);
+            }
+        }
+
+        function normalizeId(id) {
+            const s = String(id).trim();
+            try {
+                return String(parseInt(parseFloat(s)));
+            } catch {
+                return s;
+            }
+        }
+
+        function toNumeric(val) {
+            const num = parseFloat(val);
+            return isNaN(num) ? 0 : num;
+        }
+
+        function normalizeValue(value) {
+            // Normalize value: lowercase, replace hyphens with underscores
+            // Handles variations like "handed-over" vs "handed_over" vs "Handed-Over"
+            return String(value).toLowerCase().trim().replace(/-/g, '_');
+        }
+
+        function calculateRankings(bfm, func, so) {
+            bfm.forEach(r => r.imis_id = normalizeId(r.imis_id));
+            func.forEach(r => r.imis_id = normalizeId(r.imis_id));
+            so.forEach(r => r.imis_id = normalizeId(r.imis_id));
+
+            if (bfm.length === 0) {
+            throw new Error('No schemes found in BFM file');
+             }
+
+            func.forEach(r => r.functional_days = toNumeric(r.functional_days));
+            bfm.forEach(r => r.no_of_days_bfm_reported = toNumeric(r.no_of_days_bfm_reported));
+
+            const soMap = {};
+            so.forEach(r => soMap[r.imis_id] = r);
+            
+            
+            const funcMap = {};
+            func.forEach(r => {
+                funcMap[r.imis_id] = r;
+               });
+
+            const merged = bfm.map(b => ({
+              imis_id: b.imis_id,
+              no_of_days_bfm_reported: b.no_of_days_bfm_reported,
+              functional_days: funcMap[b.imis_id]?.functional_days || 0,
+              so_name: soMap[b.imis_id]?.so_name || 'Unknown',
+              sub_divisions: soMap[b.imis_id]?.sub_divisions || 'Unknown',
+              division: soMap[b.imis_id]?.division || 'Unknown'
+            })).filter(r => r.so_name !== 'Unknown');
+
+            if (merged.length === 0) {
+                throw new Error('No matching records found after merging files');
+            }
+
+            const maxDays = Math.max(
+                Math.max(...merged.map(r => r.functional_days)),
+                Math.max(...merged.map(r => r.no_of_days_bfm_reported))
+            );
+
+            if (maxDays === 0) throw new Error('All values are zero');
+
+            merged.forEach(r => {
+                r.bfm_pct = (r.no_of_days_bfm_reported / maxDays) * 100;
+                r.func_pct = (r.functional_days / maxDays) * 100;
+                r.perf_pct = (r.bfm_pct + r.func_pct) / 2;
+            });
+
+            const soGroups = groupAndRank(merged, ['so_name', 'sub_divisions', 'division']);
+            const subGroups = groupAndRank(merged, ['sub_divisions', 'division']);
+            const divGroups = groupAndRank(merged, ['division']);
+
+            return {
+                so: soGroups,
+                sub: subGroups,
+                div: divGroups,
+                metrics: {
+                    totalSchemes: merged.length,
+                    avgPerformance: (merged.reduce((s, r) => s + r.perf_pct, 0) / merged.length).toFixed(1),
+                    goodCount: soGroups.filter(r => r.grade === 'Good').length,
+                    criticalCount: soGroups.filter(r => r.grade === 'Critical').length
+                }
+            };
+        }
+
+        function groupAndRank(data, groupBy) {
+            const groups = {};
+            
+            data.forEach(row => {
+                const key = groupBy.map(g => row[g]).join('|');
+                if (!groups[key]) {
+                    groups[key] = {
+                        keys: groupBy.map(g => row[g]),
+                        schemes: [],
+                        bfm_sum: 0,
+                        func_sum: 0,
+                        perf_sum: 0
+                    };
+                }
+                groups[key].schemes.push(row.imis_id);
+                groups[key].bfm_sum += row.bfm_pct;
+                groups[key].func_sum += row.func_pct;
+                groups[key].perf_sum += row.perf_pct;
+            });
+
+            const result = Object.values(groups).map(g => ({
+                name: g.keys[0],
+                subdivision: g.keys[1],
+                division: g.keys[g.keys.length - 1],
+                schemes: g.schemes.length,
+                bfm: (g.bfm_sum / g.schemes.length).toFixed(2),
+                func: (g.func_sum / g.schemes.length).toFixed(2),
+                perf: (g.perf_sum / g.schemes.length).toFixed(2)
+            }));
+
+            const maxSchemes = Math.max(...result.map(r => r.schemes));
+            result.forEach(r => {
+                r.workload = 1 + (r.schemes / maxSchemes);
+                r.weighted = parseFloat(r.perf) * r.workload;
+            });
+
+            result.sort((a, b) => b.weighted - a.weighted);
+            result.forEach((r, i) => r.rank = i + 1);
+
+            const total = result.length;
+            const topCut = Math.round(total * 0.33);
+            const midCut = Math.round(total * 0.66);
+            
+            result.forEach(r => {
+                if (r.rank <= topCut) r.grade = 'Good';
+                else if (r.rank <= midCut) r.grade = 'Needs Improvement';
+                else r.grade = 'Critical';
+            });
+
+            return result;
+        }
+
+        function displayResults(results) {
+            displayMetrics(results.metrics);
+            
+            currentPages = { so: 0, sub: 0, div: 0 };
+            
+            setupPagination('so', results.so);
+            setupPagination('sub', results.sub);
+            setupPagination('div', results.div);
+            
+            displayPage('so', results.so);
+            displayPage('sub', results.sub);
+            displayPage('div', results.div);
+        }
+
+        function displayMetrics(metrics) {
+            document.getElementById('metricsGrid').innerHTML = `
+                <div class="metric-card">
+                    <div class="metric-icon">📊</div>
+                    <div class="metric-label">Total Handed Over Schemes</div>
+                    <div class="metric-value mono">${metrics.totalSchemes.toLocaleString()}</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">📈</div>
+                    <div class="metric-label">Avg Performance</div>
+                    <div class="metric-value mono" style="color: #3b82f6">${metrics.avgPerformance}%</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">✅</div>
+                    <div class="metric-label">Good Performers</div>
+                    <div class="metric-value mono" style="color: #16a34a">${metrics.goodCount}</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">⚠️</div>
+                    <div class="metric-label">Critical</div>
+                    <div class="metric-value mono" style="color: #dc2626">${metrics.criticalCount}</div>
+                </div>
+            `;
+        }
+
+        function setupPagination(type, data) {
+            const totalPages = Math.ceil(data.length / ROWS_PER_PAGE);
+            const slider = document.getElementById(type + 'Slider');
+            
+            slider.max = Math.max(0, totalPages - 1);
+            slider.value = 0;
+            
+            slider.oninput = () => {
+                currentPages[type] = parseInt(slider.value);
+                displayPage(type, data);
+            };
+        }
+
+        function changePage(type, delta) {
+            const data = processedData[type];
+            const totalPages = Math.ceil(data.length / ROWS_PER_PAGE);
+            
+            currentPages[type] = Math.max(0, Math.min(totalPages - 1, currentPages[type] + delta));
+            document.getElementById(type + 'Slider').value = currentPages[type];
+            
+            displayPage(type, data);
+        }
+
+        function displayPage(type, allData) {
+            const page = currentPages[type];
+            const start = page * ROWS_PER_PAGE;
+            const end = Math.min(start + ROWS_PER_PAGE, allData.length);
+            const data = allData.slice(start, end);
+            
+            const tbody = document.querySelector(`#${type}Table tbody`);
+            tbody.innerHTML = '';
+            
+            const total = allData.length;
+            const topCut = Math.round(total * 0.33);
+            const midCut = Math.round(total * 0.66);
+            
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                
+                let rowClass = '';
+                const posInCategory = row.rank <= topCut ? row.rank : 
+                                     row.rank <= midCut ? row.rank - topCut : row.rank - midCut;
+                const categorySize = row.rank <= topCut ? topCut :
+                                    row.rank <= midCut ? midCut - topCut : total - midCut;
+                
+                if (row.grade === 'Good') {
+                    const shade = posInCategory <= categorySize / 3 ? 1 : posInCategory <= 2 * categorySize / 3 ? 2 : 3;
+                    rowClass = `row-good-${shade}`;
+                } else if (row.grade === 'Needs Improvement') {
+                    const shade = posInCategory <= categorySize / 3 ? 1 : posInCategory <= 2 * categorySize / 3 ? 2 : 3;
+                    rowClass = `row-warning-${shade}`;
+                } else {
+                    const shade = posInCategory <= categorySize / 3 ? 1 : posInCategory <= 2 * categorySize / 3 ? 2 : 3;
+                    rowClass = `row-danger-${shade}`;
+                }
+                
+                tr.className = rowClass;
+                
+                const gradeClass = row.grade === 'Good' ? 'rank-good' : 
+                                  row.grade === 'Needs Improvement' ? 'rank-warning' : 'rank-danger';
+                const gradePillClass = row.grade === 'Good' ? 'grade-good' : 
+                                       row.grade === 'Needs Improvement' ? 'grade-warning' : 'grade-danger';
+                
+                if (type === 'so') {
+                    tr.innerHTML = `
+                        <td><span class="rank-badge ${gradeClass}">${row.rank}</span></td>
+                        <td><strong>${row.name}</strong></td>
+                        <td>${row.subdivision}</td>
+                        <td>${row.division}</td>
+                        <td class="mono">${row.schemes}</td>
+                        <td class="mono">${row.bfm}%</td>
+                        <td class="mono">${row.func}%</td>
+                        <td class="mono"><strong>${row.perf}%</strong></td>
+                        <td class="mono">${row.weighted.toFixed(2)}</td>
+                        <td><span class="grade-pill ${gradePillClass}">${row.grade}</span></td>
+                    `;
+                } else if (type === 'sub') {
+                    tr.innerHTML = `
+                        <td><span class="rank-badge ${gradeClass}">${row.rank}</span></td>
+                        <td><strong>${row.name}</strong></td>
+                        <td>${row.division}</td>
+                        <td class="mono">${row.schemes}</td>
+                        <td class="mono">${row.bfm}%</td>
+                        <td class="mono">${row.func}%</td>
+                        <td class="mono"><strong>${row.perf}%</strong></td>
+                        <td class="mono">${row.weighted.toFixed(2)}</td>
+                        <td><span class="grade-pill ${gradePillClass}">${row.grade}</span></td>
+                    `;
+                } else {
+                    tr.innerHTML = `
+                        <td><span class="rank-badge ${gradeClass}">${row.rank}</span></td>
+                        <td><strong>${row.name}</strong></td>
+                        <td class="mono">${row.schemes}</td>
+                        <td class="mono">${row.bfm}%</td>
+                        <td class="mono">${row.func}%</td>
+                        <td class="mono"><strong>${row.perf}%</strong></td>
+                        <td class="mono">${row.weighted.toFixed(2)}</td>
+                        <td><span class="grade-pill ${gradePillClass}">${row.grade}</span></td>
+                    `;
+                }
+                tbody.appendChild(tr);
+            });
+            
+            document.getElementById(type + 'Info').textContent = 
+                `Showing ${start + 1}-${end} of ${total}`;
+        }
+
+        function downloadPDF(type) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('landscape');
+            
+            const title = type === 'so' ? 'SO Performance Rankings' :
+                         type === 'sub' ? 'Subdivision Rankings' : 'Division Rankings';
+            
+            const data = processedData[type];
+            
+            doc.setFontSize(18);
+            doc.setFont(undefined, 'bold');
+            doc.text(title, 14, 15);
+            
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'normal');
+            let headerText = `Generated: ${new Date().toLocaleDateString()}`;
+            if (dateRange.start || dateRange.end) {
+                const startStr = dateRange.start ? new Date(dateRange.start).toLocaleDateString() : 'N/A';
+                const endStr = dateRange.end ? new Date(dateRange.end).toLocaleDateString() : 'N/A';
+                headerText += ` | Data Range: ${startStr} to ${endStr}`;
+            }
+            doc.text(headerText, 14, 22);
+            
+            const columns = type === 'so' ? 
+                ['Rank', 'SO Name', 'Subdivision', 'Division', 'Handed Over Schemes', 'BFM %', 'Func %', 'Perf %', 'Weighted', 'Grade'] :
+                type === 'sub' ?
+                ['Rank', 'Subdivision', 'Division', 'Handed Over Schemes', 'BFM %', 'Func %', 'Perf %', 'Weighted', 'Grade'] :
+                ['Rank', 'Division', 'Handed Over Schemes', 'BFM %', 'Func %', 'Perf %', 'Weighted', 'Grade'];
+            
+            const total = data.length;
+            const topCut = Math.round(total * 0.33);
+            const midCut = Math.round(total * 0.66);
+            
+            const rows = data.map(d => {
+                const baseRow = type === 'so' ? 
+                    [d.rank, d.name, d.subdivision, d.division, d.schemes, d.bfm, d.func, d.perf, d.weighted.toFixed(2), d.grade] :
+                    type === 'sub' ?
+                    [d.rank, d.name, d.division, d.schemes, d.bfm, d.func, d.perf, d.weighted.toFixed(2), d.grade] :
+                    [d.rank, d.name, d.schemes, d.bfm, d.func, d.perf, d.weighted.toFixed(2), d.grade];
+                
+                return baseRow;
+            });
+            
+            doc.autoTable({
+                head: [columns],
+                body: rows,
+                startY: 28,
+                theme: 'grid',
+                styles: { 
+                    fontSize: 8,
+                    cellPadding: 3
+                },
+                headStyles: {
+                    fillColor: [59, 130, 246],
+                    textColor: 255,
+                    fontStyle: 'bold'
+                },
+                didParseCell: function(data) {
+                    if (data.section === 'body') {
+                        const rank = data.row.raw[0];
+                        const gradeColumnIndex = data.row.raw.length - 1; // Last column is Grade
+                        
+                        // Only color the Grade column (last column)
+                        if (data.column.index === gradeColumnIndex) {
+                            let fillColor;
+                            if (rank <= topCut) {
+                                // Dark Green
+                                fillColor = [74, 222, 128];
+                            } else if (rank <= midCut) {
+                                // Dark Yellow
+                                fillColor = [250, 204, 21];
+                            } else {
+                                // Dark Red
+                                fillColor = [248, 113, 113];
+                            }
+                            
+                            data.cell.styles.fillColor = fillColor;
+                            data.cell.styles.textColor = [0, 0, 0]; // White text
+                            data.cell.styles.fontStyle = 'bold';
+                        }
+                    }
+                }
+            });
+            
+            // Add legend with darker colors
+            const legendY = doc.internal.pageSize.height - 20;
+            doc.setFontSize(9);
+            doc.setFont(undefined, 'bold');
+            doc.text('Legend:', 14, legendY);
+            
+            doc.setFont(undefined, 'normal');
+            
+            // Dark Green
+            doc.setFillColor(74, 222, 128);
+            doc.rect(35, legendY - 4, 8, 5, 'F');
+            doc.text('Top 33% (Good)', 45, legendY);
+            
+            // Dark Yellow
+            doc.setFillColor(250, 204, 21);
+            doc.rect(85, legendY - 4, 8, 5, 'F');
+            doc.text('Middle 33% (Needs Improvement)', 95, legendY);
+            
+            // Dark Red
+            doc.setFillColor(248, 113, 113);
+            doc.rect(175, legendY - 4, 8, 5, 'F');
+            doc.text('Bottom 34% (Critical)', 185, legendY);
+            
+            doc.save(`${title.replace(/ /g, '_')}.pdf`);
+        }
+
+        function downloadExcel(type) {
+            const title = type === 'so' ? 'SO_Performance_Rankings' :
+                         type === 'sub' ? 'Subdivision_Rankings' : 'Division_Rankings';
+            
+            const data = processedData[type];
+            
+            // Prepare metadata rows
+            const metadataRows = [
+                ['Generated Date:', new Date().toLocaleDateString()],
+            ];
+            
+            if (dateRange.start || dateRange.end) {
+                const startStr = dateRange.start ? new Date(dateRange.start).toLocaleDateString() : 'N/A';
+                const endStr = dateRange.end ? new Date(dateRange.end).toLocaleDateString() : 'N/A';
+                metadataRows.push(['Data Date Range:', `${startStr} to ${endStr}`]);
+            }
+            
+            metadataRows.push([]); // Empty row for spacing
+            
+            // Prepare headers
+            const headers = type === 'so' ? 
+                ['Rank', 'SO Name', 'Subdivision', 'Division', 'Handed Over Schemes', 'BFM %', 'Func %', 'Perf %', 'Weighted Score', 'Grade'] :
+                type === 'sub' ?
+                ['Rank', 'Subdivision', 'Division', 'Handed Over Schemes', 'BFM %', 'Func %', 'Perf %', 'Weighted Score', 'Grade'] :
+                ['Rank', 'Division', 'Handed Over Schemes', 'BFM %', 'Func %', 'Perf %', 'Weighted Score', 'Grade'];
+            
+            // Prepare data rows
+            const rows = data.map(d => {
+                if (type === 'so') {
+                    return [d.rank, d.name, d.subdivision, d.division, d.schemes, d.bfm, d.func, d.perf, d.weighted.toFixed(2), d.grade];
+                } else if (type === 'sub') {
+                    return [d.rank, d.name, d.division, d.schemes, d.bfm, d.func, d.perf, d.weighted.toFixed(2), d.grade];
+                } else {
+                    return [d.rank, d.name, d.schemes, d.bfm, d.func, d.perf, d.weighted.toFixed(2), d.grade];
+                }
+            });
+            
+            // Combine metadata, headers and rows
+            const wsData = [...metadataRows, headers, ...rows];
+            
+            // Create worksheet
+            const ws = XLSX.utils.aoa_to_sheet(wsData);
+            
+            // Set column widths
+            const colWidths = headers.map((h, i) => {
+                if (i === 1) return { wch: 25 }; // Name column wider
+                if (i === 2) return { wch: 20 }; // Subdivision/Division
+                return { wch: 12 };
+            });
+            ws['!cols'] = colWidths;
+            
+            // Create workbook
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, title.substring(0, 31)); // Sheet name max 31 chars
+            
+            // Save file
+            XLSX.writeFile(wb, `${title}.xlsx`);
+        }
+
+        function showError(msg) {
+            const errorDiv = document.getElementById('errorMsg');
+            errorDiv.textContent = '❌ ' + msg;
+            errorDiv.style.display = 'block';
+            setTimeout(() => errorDiv.style.display = 'none', 8000);
+        }
+    </script>
 </body>
 </html>
